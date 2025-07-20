@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <title>服務估價單 | 程云行銷顧問有限公司</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap 5 CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" crossorigin href="/quotation/assets/index-FvTv2iQF.css">
+  </head>
+  <body>
+    <!-- ================= HEADER ================= -->
+    <div class="container-fluid bg-white p-4 shadow-sm rounded">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h1 class="mb-0">服務估價單</h1>
+          <small class="text-muted">程云行銷顧問有限公司</small>
+        </div>
+        <button class="btn btn-primary btn-sm no-print" onclick="window.print()">
+          <i class="bi bi-printer"></i> 列印 / 下載 PDF
+        </button>
+      </div>
+
+      <!-- ===== Meta Info ===== -->
+      <div class="row g-2 small meta-info boxed">
+        <div>
+          <label class="form-label mb-1">估價日期</label>
+          <input type="date" id="quoteDate" class="form-control" />
+        </div>
+        <div>
+          <label class="form-label mb-1">估價單號</label>
+          <input type="text" id="quoteNo" class="form-control" placeholder="Q3-123456001" />
+        </div>
+        <div>
+          <label class="form-label mb-1">活動名稱</label>
+          <input
+            type="text"
+            id="eventName"
+            class="form-control"
+            placeholder="AI顧問應用 - 企業內訓"
+          />
+        </div>
+        <div>
+          <label class="form-label mb-1">活動日期</label>
+          <input type="date" id="eventDate" class="form-control" />
+        </div>
+        <div>
+          <label class="form-label mb-1">時間</label>
+          <input type="text" id="eventTime" class="form-control" placeholder="13:00~15:00" />
+        </div>
+        <div>
+          <label class="form-label mb-1">地點</label>
+          <input type="text" id="venue" class="form-control" placeholder="貴公司會議室" />
+        </div>
+        <div>
+          <label class="form-label mb-1">帳別</label>
+          <input type="text" id="account" class="form-control" value="NT$" />
+        </div>
+        <div>
+          <label class="form-label mb-1">稅率%</label>
+          <input type="number" id="taxRate" class="form-control" value="5" />
+        </div>
+        <div>
+          <label class="form-label mb-1">付款</label>
+          <input type="text" id="paymentTerm" class="form-control" placeholder="馬上結帳" />
+        </div>
+        <div>
+          <label class="form-label mb-1">有效期</label>
+          <input type="text" id="validDays" class="form-control" value="發出日起14日" />
+        </div>
+      </div>
+
+      <!-- ===== 客戶資料 & 簽章 ===== -->
+      <div class="row gx-2 gy-3 mt-4 small align-items-stretch">
+        <div class="col-md-6 boxed">
+          <h6>客戶資料</h6>
+          <div class="row g-2">
+            <div class="col-12">
+              <input
+                type="text"
+                class="form-control"
+                id="clientCompany"
+                placeholder="客戶公司名稱"
+              />
+            </div>
+            <div class="col-6">
+              <input type="text" class="form-control" id="clientContact" placeholder="聯絡人" />
+            </div>
+            <div class="col-6">
+              <input type="text" class="form-control" id="clientPhone" placeholder="電話" />
+            </div>
+            <div class="col-12">
+              <input type="text" class="form-control" id="clientAddress" placeholder="地址" />
+            </div>
+            <div class="col-6">
+              <input type="text" class="form-control" id="clientFax" placeholder="傳真" />
+            </div>
+            <div class="col-6">
+              <input type="text" class="form-control" id="clientMobile" placeholder="手機" />
+            </div>
+            <div class="col-12">
+              <input type="email" class="form-control" id="clientEmail" placeholder="Email" />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 boxed d-flex flex-column">
+          <h6>客戶簽章</h6>
+          <div class="signature-box">簽章 / Signature：</div>
+        </div>
+      </div>
+
+      <!-- ===== 我方公司固定資訊 ===== -->
+      <div class="row mt-3 small">
+        <div class="col-12">
+          <fieldset class="vendor-box boxed position-relative p-2">
+            <legend class="float-none w-auto px-2 small mb-0">供應商資料</legend>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm position-absolute top-0 end-0 translate-middle-y no-print"
+              style="font-size: 0.75rem"
+              onclick="this.closest('fieldset').classList.toggle('collapsed')"
+            >
+              展開供應商
+            </button>
+            <div class="row g-2 mb-2">
+              <div class="col-md-4">
+                <label class="form-label mb-0 small">公司</label>
+                <input
+                  type="text"
+                  class="form-control form-control-sm"
+                  id="vendorCompany"
+                  value="程云行銷顧問有限公司"
+                />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label mb-0 small">統編</label>
+                <input
+                  type="text"
+                  class="form-control form-control-sm"
+                  id="vendorTax"
+                  value="90659194"
+                />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label mb-0 small">聯絡人</label>
+                <input
+                  type="text"
+                  class="form-control form-control-sm"
+                  id="vendorContact"
+                  value="徐享"
+                />
+              </div>
+            </div>
+            <div class="row g-2">
+              <div class="col-md-3">
+                <label class="form-label mb-0 small">Email</label>
+                <input
+                  type="email"
+                  class="form-control form-control-sm"
+                  id="vendorEmail"
+                  value="chengyunm1313@gmail.com"
+                />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label mb-0 small">電話</label>
+                <input
+                  type="text"
+                  class="form-control form-control-sm"
+                  id="vendorPhone"
+                  value="0901-454914"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label mb-0 small">地址</label>
+                <input
+                  type="text"
+                  class="form-control form-control-sm"
+                  id="vendorAddress"
+                  value="新北市中和區景平路 746 號 5 樓"
+                />
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+      <!-- ===== 操作按鈕列 ===== -->
+      <div class="d-flex flex-wrap align-items-center gap-2 mt-4 mb-2 no-print">
+        <!-- 項目操作 -->
+        <div class="btn-group me-2" role="group">
+          <button class="btn btn-primary btn-sm" title="新增一列" onclick="addRow()">
+            <i class="bi bi-plus-circle"></i> 新增
+          </button>
+          <button class="btn btn-secondary btn-sm" title="複製勾選列" onclick="duplicateRow()">
+            <i class="bi bi-files"></i> 複製
+          </button>
+          <button class="btn btn-danger btn-sm" title="刪除勾選列" onclick="deleteSelected()">
+            <i class="bi bi-trash"></i> 刪除
+          </button>
+        </div>
+
+        <!-- 資料處理 -->
+        <div class="btn-group me-2" role="group">
+          <button
+            class="btn btn-outline-primary btn-sm"
+            title="縮小欄寬"
+            onclick="adjustColWidth(-20)"
+          >
+            <i class="bi bi-chevron-left"></i> 精簡
+          </button>
+          <button
+            class="btn btn-outline-primary btn-sm"
+            title="放寬欄寬"
+            onclick="adjustColWidth(20)"
+          >
+            <i class="bi bi-chevron-right"></i> 再寬
+          </button>
+          <button
+            class="btn btn-outline-warning btn-sm"
+            title="重新計算金額"
+            onclick="calculateTotal()"
+          >
+            <i class="bi bi-calculator"></i> 重算
+          </button>
+        </div>
+
+        <!-- 欄寬滑桿 -->
+        <label class="ms-1 small mb-0">欄寬</label>
+        <input
+          type="range"
+          id="colWidthSlider"
+          class="form-range"
+          style="width: 150px"
+          min="100"
+          max="400"
+          value="180"
+        />
+
+        <!-- 存取 -->
+        <div class="btn-group me-2" role="group">
+          <button class="btn btn-success btn-sm" title="暫存至瀏覽器" onclick="saveDraft()">
+            <i class="bi bi-save"></i> 暫存
+          </button>
+          <button class="btn btn-outline-secondary btn-sm" title="載入暫存" onclick="loadDraft()">
+            <i class="bi bi-folder2-open"></i> 載入
+          </button>
+          <label class="btn btn-outline-secondary btn-sm mb-0" title="匯入 JSON / CSV">
+            <i class="bi bi-upload"></i> 匯入
+            <input
+              type="file"
+              id="fileInput"
+              hidden
+              accept=".json,.csv"
+              onchange="importFile(event)"
+            />
+          </label>
+        </div>
+
+        <!-- PDF / 清除 -->
+        <div class="btn-group me-2" role="group">
+          <button class="btn btn-primary btn-sm" title="匯出 PDF" onclick="exportPDF()">
+            <i class="bi bi-printer"></i> PDF
+          </button>
+          <button class="btn btn-danger btn-sm" title="清除暫存" onclick="clearDraft()">
+            <i class="bi bi-x-circle"></i> 清暫存
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== 服務項目表格 ===== -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-sm align-middle" id="itemTable">
+          <thead class="table-light text-center">
+            <tr>
+              <th style="width: 30px">
+                <input type="checkbox" id="chkAll" onclick="toggleAll(this)" />
+              </th>
+              <th>服務項目</th>
+              <th>內容說明</th>
+              <th style="width: 60px">單位</th>
+              <th style="width: 60px">數量</th>
+              <th style="width: 80px">單價</th>
+              <th style="width: 90px">小計</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center"><input type="checkbox" class="row-chk" /></td>
+              <td><input type="text" class="form-control form-control-sm item-name" /></td>
+              <td><textarea class="form-control form-control-sm item-desc" rows="1"></textarea></td>
+              <td>
+                <input type="text" class="form-control form-control-sm item-unit" value="組" />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  class="form-control form-control-sm item-qty"
+                  value="1"
+                  min="1"
+                />
+              </td>
+              <td>
+                <input type="number" class="form-control form-control-sm item-price" value="0" />
+              </td>
+              <td class="text-end fw-bold item-subtotal">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ===== 金額統計 ===== -->
+      <div class="row g-3 mt-3 small">
+        <div class="col-md-4">
+          <table class="table table-bordered table-sm">
+            <tbody>
+              <tr>
+                <th class="bg-light">未稅小計</th>
+                <td class="text-end" id="subtotal">NT$ 0</td>
+              </tr>
+              <tr>
+                <th class="bg-light">稅額 5%</th>
+                <td class="text-end" id="tax">NT$ 0</td>
+              </tr>
+              <tr>
+                <th class="bg-light">含稅合計</th>
+                <td class="text-end fw-bold" id="total">NT$ 0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-8">
+          <h6>備註 / 條款</h6>
+          <textarea class="form-control notes-area terms-box" id="notes" rows="4">
+1. 客戶簽章後即視為訂單確認。
+2. 執行時間以貴公司交付款項後，為開始起算時間。
+3. 以上方案.採一次性。
+        </textarea
+          >
+        </div>
+      </div>
+
+      <!-- ===== 銀行匯款資訊 ===== -->
+      <div class="mt-4 small">
+        <h6>付款方式</h6>
+        <p class="mb-0">
+          國泰世華銀行 – 中和分行 (013)<br />
+          戶名：程云行銷顧問有限公司<br />
+          帳號：045-03-501134-3
+        </p>
+      </div>
+
+      <div class="text-end small mt-5">
+        產生日期：<span id="generatedAt"></span> | 程云行銷顧問有限公司
+      </div>
+    </div>
+
+    <!-- ===== Bootstrap JS & Icons ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <script src="js/app.js"></script>
+    <!-- jQuery, colResizable & html2pdf -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/colResizable/1.6/colResizable-1.6.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  </body>
+</html>
