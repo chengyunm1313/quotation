@@ -1,236 +1,326 @@
+/* ========= 工具函式 ========= */
+function numClean(v){
+  if(typeof v !== 'string') v = String(v ?? '');
+  v = v.replace(/,/g,'').replace(/[^\d.-]/g,'');
+  const n = parseFloat(v);
+  return isNaN(n) ? 0 : n;
+}
+function fmt(n){
+  return (+n || 0).toLocaleString();
+}
 
-    // ------- 初始化 -------
-    document.getElementById('quoteDate').valueAsDate = new Date();
-    document.getElementById('generatedAt').textContent = new Date().toLocaleString();
+/* ========= 動態列操作 ========= */
+function addRow(){
+  const tbody = document.querySelector('#itemTable tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="text-center"><input type="checkbox" class="row-chk"></td>
+    <td><input type="text" class="form-control form-control-sm item-name"></td>
+    <td><textarea class="form-control form-control-sm item-desc" rows="1"></textarea></td>
+    <td><input type="text" class="form-control form-control-sm item-unit" value="組"></td>
+    <td><input type="number" class="form-control form-control-sm item-qty" value="1" min="1" inputmode="decimal"></td>
+    <td><input type="text" class="form-control form-control-sm item-price" value="0" inputmode="decimal"></td>
+    <td><input type="text" class="form-control form-control-sm item-discount" value="0" inputmode="decimal"></td>
+    <td class="text-end fw-bold item-subtotal">0</td>
+  `;
+  tbody.appendChild(tr);
+  updateRowSubtotal(tr);
+  calculateTotal();
+}
 
-    // 事件委派：即時計算
-    document.getElementById('itemTable').addEventListener('input', function (e) {
-      if (['item-qty','item-price','item-discount'].some(cls => e.target.classList.contains(cls))) {
-        updateRowSubtotal(e.target.closest('tr'));
-        calculateTotal();
-      }
+function duplicateRow(){
+  const tbody = document.querySelector('#itemTable tbody');
+  [...tbody.querySelectorAll('tr')].forEach(row=>{
+    if(row.querySelector('.row-chk').checked){
+      const clone = row.cloneNode(true);
+      clone.querySelector('.row-chk').checked = false;
+      tbody.appendChild(clone);
+      updateRowSubtotal(clone);
+    }
+  });
+  calculateTotal();
+}
+
+function deleteSelected(){
+  const tbody = document.querySelector('#itemTable tbody');
+  [...tbody.querySelectorAll('tr')].forEach(row=>{
+    if(row.querySelector('.row-chk').checked){
+      row.remove();
+    }
+  });
+  if(!tbody.querySelector('tr')) addRow(); // 至少保留一列
+  calculateTotal();
+}
+
+function toggleAll(source){
+  const checked = source.checked;
+  document.querySelectorAll('#itemTable tbody .row-chk').forEach(cb=>cb.checked = checked);
+}
+
+/* ========= 計算 ========= */
+function updateRowSubtotal(row){
+  const qty = numClean(row.querySelector('.item-qty')?.value ?? 0);
+  const price = numClean(row.querySelector('.item-price')?.value ?? 0);
+  const discount = numClean(row.querySelector('.item-discount')?.value ?? 0);
+  const subtotal = Math.max(qty*price - discount, 0);
+  row.querySelector('.item-subtotal').textContent = fmt(subtotal);
+  return subtotal;
+}
+
+function calculateTotal(){
+  const rows = document.querySelectorAll('#itemTable tbody tr');
+  let subtotal = 0;
+  rows.forEach(r=> subtotal += updateRowSubtotal(r));
+  const taxRate = numClean(document.getElementById('taxRate').value);
+  const tax = subtotal * (taxRate/100);
+  const total = subtotal + tax;
+  document.getElementById('subtotal').textContent = 'NT$ ' + fmt(subtotal);
+  document.getElementById('tax').textContent = 'NT$ ' + fmt(tax);
+  document.getElementById('total').textContent = 'NT$ ' + fmt(total);
+}
+
+/* ========= 欄寬調整 ========= */
+function adjustColWidth(amount){
+  const root = document.documentElement;
+  const cur = parseInt(getComputedStyle(root).getPropertyValue('--col-name-width') || '180',10);
+  let next = cur + amount;
+  if(next < 100) next = 100;
+  if(next > 400) next = 400;
+  root.style.setProperty('--col-name-width', next+'px');
+  const slider = document.getElementById('colWidthSlider');
+  if(slider) slider.value = next;
+}
+
+/* ========= 暫存 / 載入 ========= */
+function collectMeta(){
+  return {
+    quoteDate: document.getElementById('quoteDate').value,
+    quoteNo: document.getElementById('quoteNo').value,
+    eventName: document.getElementById('eventName').value,
+    eventDate: document.getElementById('eventDate').value,
+    eventTime: document.getElementById('eventTime').value,
+    venue: document.getElementById('venue').value,
+    account: document.getElementById('account').value,
+    taxRate: document.getElementById('taxRate').value,
+    paymentTerm: document.getElementById('paymentTerm').value,
+    validDays: document.getElementById('validDays').value,
+    clientCompany: document.getElementById('clientCompany').value,
+    clientContact: document.getElementById('clientContact').value,
+    clientPhone: document.getElementById('clientPhone').value,
+    clientAddress: document.getElementById('clientAddress').value,
+    clientFax: document.getElementById('clientFax').value,
+    clientMobile: document.getElementById('clientMobile').value,
+    clientEmail: document.getElementById('clientEmail').value,
+    vendorCompany: document.getElementById('vendorCompany').value,
+    vendorTax: document.getElementById('vendorTax').value,
+    vendorContact: document.getElementById('vendorContact').value,
+    vendorEmail: document.getElementById('vendorEmail').value,
+    vendorPhone: document.getElementById('vendorPhone').value,
+    vendorAddress: document.getElementById('vendorAddress').value,
+    notes: document.getElementById('notes').value
+  };
+}
+
+function applyMeta(m){
+  if(!m) return;
+  for(const k of Object.keys(m)){
+    const el = document.getElementById(k);
+    if(el) el.value = m[k];
+  }
+}
+
+function collectItems(){
+  const items = [];
+  document.querySelectorAll('#itemTable tbody tr').forEach(tr=>{
+    items.push({
+      name: tr.querySelector('.item-name').value,
+      desc: tr.querySelector('.item-desc').value,
+      unit: tr.querySelector('.item-unit').value,
+      qty: tr.querySelector('.item-qty').value,
+      price: tr.querySelector('.item-price').value,
+      discount: tr.querySelector('.item-discount').value
     });
+  });
+  return items;
+}
 
-    // -------- functions --------
-    function addRow(){
-      const tbody = document.querySelector('#itemTable tbody');
-      const template = tbody.querySelector('tr').cloneNode(true);
-      template.querySelectorAll('input, textarea').forEach(el=>{
-        if(el.type==='checkbox'){el.checked=false;}
-        else{el.value = (el.classList.contains('item-unit')? '組' : '');}
-      });
-      template.querySelector('.item-qty').value = 1;
-      template.querySelector('.item-price').value = 0;
-      template.querySelector('.item-subtotal').textContent = '0';
-      tbody.appendChild(template);
-    }
+function populateItems(items){
+  const tbody = document.querySelector('#itemTable tbody');
+  tbody.innerHTML='';
+  (items||[]).forEach(it=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="text-center"><input type="checkbox" class="row-chk"></td>
+      <td><input type="text" class="form-control form-control-sm item-name" value="${it.name||''}"></td>
+      <td><textarea class="form-control form-control-sm item-desc" rows="1">${it.desc||''}</textarea></td>
+      <td><input type="text" class="form-control form-control-sm item-unit" value="${it.unit||'組'}"></td>
+      <td><input type="number" class="form-control form-control-sm item-qty" value="${it.qty||1}" min="1" inputmode="decimal"></td>
+      <td><input type="text" class="form-control form-control-sm item-price" value="${it.price||0}" inputmode="decimal"></td>
+      <td><input type="text" class="form-control form-control-sm item-discount" value="${it.discount||0}" inputmode="decimal"></td>
+      <td class="text-end fw-bold item-subtotal">0</td>`;
+    tbody.appendChild(tr);
+    updateRowSubtotal(tr);
+  });
+  calculateTotal();
+}
 
-    function deleteSelected(){
-      const tbody = document.querySelector('#itemTable tbody');
-      tbody.querySelectorAll('.row-chk:checked').forEach(chk=>{
-        if(tbody.rows.length>1){ chk.closest('tr').remove(); }
-      });
-      calculateTotal();
-    }
+function saveDraft(){
+  const data = {meta:collectMeta(),items:collectItems()};
+  localStorage.setItem('quotationDraft', JSON.stringify(data));
+  alert('已暫存資料');
+}
 
-    function toggleAll(mainChk){
-      document.querySelectorAll('.row-chk').forEach(c=>c.checked=mainChk.checked);
-    }
+function loadDraft(){
+  const raw = localStorage.getItem('quotationDraft');
+  if(!raw){ alert('無暫存資料'); return; }
+  try{
+    const data = JSON.parse(raw);
+    applyMeta(data.meta);
+    populateItems(data.items);
+    alert('已載入暫存資料');
+  }catch(err){
+    alert('暫存資料格式不正確');
+  }
+}
 
-    function updateRowSubtotal(row){
-      const qty      = parseFloat(row.querySelector('.item-qty').value.replace(/,/g,'')) || 0;
-      const price    = parseFloat(row.querySelector('.item-price').value.replace(/,/g,'')) || 0;
-      const discount = parseFloat(row.querySelector('.item-discount').value.replace(/,/g,'')) || 0;
-      const subtotal = qty * price - discount;
-      row.querySelector('.item-subtotal').textContent = subtotal.toLocaleString();
-    }
+function clearDraft(){
+  if(confirm('確認清除暫存？')){
+    localStorage.removeItem('quotationDraft');
+    alert('已清除暫存資料');
+  }
+}
 
-    function calculateTotal(){
-      const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
-      let subtotal = 0;
-      document.querySelectorAll('.item-subtotal').forEach(td=>{
-        subtotal += parseFloat(td.textContent.replace(/,/g,'')) || 0;
-      });
-      const tax = Math.round(subtotal * taxRate / 100);
-      const total = subtotal + tax;
-      document.getElementById('subtotal').textContent = `NT$ ${subtotal.toLocaleString()}`;
-      document.getElementById('tax').textContent      = `NT$ ${tax.toLocaleString()}`;
-      document.getElementById('total').textContent   = `NT$ ${total.toLocaleString()}`;
-    }
-
-    function saveDraft(){
-      const items = [];
-      document.querySelectorAll('#itemTable tbody tr').forEach(tr=>{
-        items.push({
-          name: tr.querySelector('.item-name').value,
-          desc: tr.querySelector('.item-desc').value,
-          unit: tr.querySelector('.item-unit').value,
-          qty : +tr.querySelector('.item-qty').value || 0,
-          price: +tr.querySelector('.item-price').value || 0
-        });
-      });
-      localStorage.setItem('quoteDraft', JSON.stringify(items));
-      alert('已暫存至瀏覽器');
-    }
-
-    // 初算一次
-    updateRowSubtotal(document.querySelector('#itemTable tbody tr'));
-    calculateTotal();
-
-
-
-    /* -------- 複製勾選列 -------- */
-    function duplicateRow(){
-      const tbody = document.querySelector('#itemTable tbody');
-      const rows = [...tbody.querySelectorAll('.row-chk:checked')];
-      if(!rows.length){ alert('請先勾選要複製的列'); return; }
-      rows.forEach(r=>{
-        const clone = r.closest('tr').cloneNode(true);
-        clone.querySelector('.row-chk').checked = false;
-        tbody.appendChild(clone);
-        updateRowSubtotal(clone);
-      });
-      calculateTotal();
-    }
-
-    /* -------- 讀取 / 清除 Draft -------- */
-    function loadDraft(){
-      const data = localStorage.getItem('quoteDraft');
-      if(!data){ alert('沒有暫存資料'); return; }
+/* ========= 匯入 ========= */
+function importFile(evt){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const txt = e.target.result;
+    if(file.name.endsWith('.json')){
       try{
-        populateItems(JSON.parse(data));
-      }catch(e){
-        alert('暫存資料格式錯誤');
-      }
-    }
-    function clearDraft(){
-      localStorage.removeItem('quoteDraft');
-      alert('已清除暫存');
-    }
-
-    /* -------- 套用欄寬 -------- */
-    function applyColWidth(val){
-      document.documentElement.style.setProperty('--col-name-width', `${val}px`);
-      // 同步套用至標題與各列，避免被其他 inline 樣式覆寫
-      document.querySelectorAll('#itemTable th:nth-child(2), #itemTable td:nth-child(2)')
-        .forEach(el => el.style.width = `${val}px`);
-    }
-
-    /* -------- 欄寬滑桿 -------- */
-    const colSlider = document.getElementById('colWidthSlider');
-    colSlider.addEventListener('input', e=>{
-      applyColWidth(e.target.value);
-    });
-    // 初始欄寬
-    applyColWidth(colSlider.value);
-
-    /* -------- 快捷調整欄寬 -------- */
-    function adjustColWidth(delta){
-      const slider = document.getElementById('colWidthSlider');
-      let newVal = Math.min(+slider.max, Math.max(+slider.min, (+slider.value + delta)));
-      slider.value = newVal;
-      applyColWidth(newVal);
-    }
-
-    /* -------- 匯出 PDF -------- */
-    function exportPDF(){
-      const element = document.querySelector('.container-fluid');
-      const clone = element.cloneNode(true);
-
-      // 將 textarea 內容轉成 div，保留換行
-      clone.querySelectorAll('textarea').forEach(txt => {
-        const div = document.createElement('div');
-        div.style.cssText = 'white-space:pre-wrap;border:1px solid #ced4da;padding:.5rem;border-radius:.25rem;font-size:.875rem;';
-        div.textContent = txt.value;
-        txt.replaceWith(div);
-      });
-
-      html2pdf()
-        .set({
-          margin: 0,
-          filename: 'quotation.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, scrollY: 0 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        })
-        .from(clone)
-        .save();
-    }
-
-    /* -------- 匯入 JSON / CSV -------- */
-    function importFile(evt){
-      const file = evt.target.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e){
-        const txt = e.target.result;
-        try{
-          let items = [];
-          if(file.name.endsWith('.json')){
-            items = JSON.parse(txt); // 期望為陣列 [{name,desc,unit,qty,price}]
-          }else{
-            // 簡易 CSV 解析：name,desc,unit,qty,price (第一行標題將被忽略)
-            const lines = txt.trim().split(/\r?\n/).slice(1);
-            lines.forEach(l=>{
-              const [name,desc,unit,qty,price] = l.split(',');
-              items.push({name,desc,unit,qty:+qty,price:+price});
-            });
-          }
-          populateItems(items);
-        }catch(err){
-          alert('檔案格式錯誤或內容無法解析');
+        const data = JSON.parse(txt);
+        if (data && Array.isArray(data.items) && data.items.length) {
+          applyMeta(data.meta || {});
+          populateItems(data.items);
+          alert('已匯入 JSON');
+        } else {
+          alert('JSON 內容無有效項目');
         }
-        // 清空 value 以便下次選檔
-        evt.target.value='';
-      };
-      reader.readAsText(file,'utf-8');
+      }catch(err){
+        alert('JSON 格式錯誤');
+      }
+    }else if(file.name.endsWith('.csv')){
+      importCSV(txt);
+    }else{
+      alert('不支援的檔案類型');
     }
+  };
+  reader.readAsText(file);
+  evt.target.value='';
+}
 
-    function populateItems(items){
-      const tbody = document.querySelector('#itemTable tbody');
-      tbody.innerHTML='';
-      items.forEach(it=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="text-center"><input type="checkbox" class="row-chk"></td>
-          <td><input type="text" class="form-control form-control-sm item-name" value="${it.name||''}"></td>
-          <td><textarea class="form-control form-control-sm item-desc" rows="1">${it.desc||''}</textarea></td>
-          <td><input type="text" class="form-control form-control-sm item-unit" value="${it.unit||'組'}"></td>
-          <td><input type="number" class="form-control form-control-sm item-qty" value="${it.qty||1}" min="1"></td>
-          <td><input type="text" class="form-control form-control-sm item-price" value="${it.price||0}" inputmode="decimal"></td>
-          <td><input type="text" class="form-control form-control-sm item-discount" value="${it.discount||0}" inputmode="decimal"></td>
-          <td class="text-end fw-bold item-subtotal">0</td>
-        `;
-        tbody.appendChild(tr);
-        updateRowSubtotal(tr);
-      });
-      calculateTotal();
-    }
-  
-// 自動千分位
+function importCSV(csvText){
+  const lines = csvText.trim().split(/\r?\n/);
+  if(lines.length<2){ alert('CSV 無資料'); return; }
+  const header = lines[0].split(',');
+  const items=[];
+  for(let i=1;i<lines.length;i++){
+    const cols = lines[i].split(',');
+    const it={};
+    header.forEach((h,idx)=> it[h.trim()] = cols[idx] ? cols[idx].trim() : '');
+    items.push({
+      name:it.name||'',
+      desc:it.desc||'',
+      unit:it.unit||'',
+      qty:it.qty||1,
+      price:it.price||0,
+      discount:it.discount||0
+    });
+  }
+  if (items.length) {
+    populateItems(items);
+    alert('已匯入 CSV');
+  } else {
+    alert('CSV 內容無有效項目，保留原表格');
+  }
+}
+
+/* ========= PDF ========= */
+function exportPDF(){
+  // 更新產生時間
+  document.getElementById('generatedAt').textContent = new Date().toLocaleString();
+  const element = document.querySelector('.container-fluid');
+  const opt = {
+    // 設成 0 移除 html2pdf 預設 0.5‑inch 頁邊距
+    margin:       0,
+    filename:     (document.getElementById('quoteNo').value || 'quotation') + '.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  {
+      scale: 2,
+      useCORS: true,
+      // 保證擷取完整寬度，避免 canvas 截圖時產生額外留白
+      scrollY: 0
+    },
+    jsPDF:        { unit:'in', format:'a4', orientation:'portrait' },
+    // 避免標題與表格被切到新頁
+    pagebreak:    { mode: ['avoid-all'] }
+  };
+  html2pdf().set(opt).from(element).save();
+}
+
+/* ========= 模板 ========= */
+const TEMPLATE_STORE_KEY = 'quoteTemplates';
+if(!localStorage.getItem(TEMPLATE_STORE_KEY)){
+  localStorage.setItem(TEMPLATE_STORE_KEY, JSON.stringify([
+    {name:'網站建置',desc:'五頁靜態官網',unit:'案',qty:1,price:30000,discount:0},
+    {name:'維護費',desc:'一年維護服務',unit:'年',qty:1,price:12000,discount:0}
+  ]));
+}
+function applyTemplate(){
+  const items = JSON.parse(localStorage.getItem(TEMPLATE_STORE_KEY)||'[]');
+  if(!items.length){ alert('尚未建立模板'); return; }
+  populateItems(items);
+}
+
+/* ========= 事件綁定 ========= */
+document.getElementById('itemTable').addEventListener('input', e=>{
+  if(['item-qty','item-price','item-discount'].some(cls=> e.target.classList.contains(cls))){
+    updateRowSubtotal(e.target.closest('tr'));
+    calculateTotal();
+  }
+});
 document.getElementById('itemTable').addEventListener('blur', e=>{
-  if(['item-qty','item-price','item-discount'].some(cls => e.target.classList.contains(cls))){
-    const val = (+e.target.value || 0);
-    e.target.value = val.toLocaleString();
+  if(['item-price','item-discount'].some(cls=> e.target.classList.contains(cls))){
+    e.target.value = fmt(numClean(e.target.value));
   }
 }, true);
 
-// --------- 套用模板功能 ---------
-const TEMPLATE_STORE_KEY = 'quoteTemplates';
-if (!localStorage.getItem(TEMPLATE_STORE_KEY)) {
-  localStorage.setItem(TEMPLATE_STORE_KEY, JSON.stringify([
-    {name:'網站建置',desc:'五頁靜態官網',unit:'案',qty:1,price:30000,discount:0},
-    {name:'維護費',desc:'一年',unit:'年',qty:1,price:12000,discount:0}
-  ]));
-}
+document.getElementById('colWidthSlider').addEventListener('input', e=>{
+  document.documentElement.style.setProperty('--col-name-width', e.target.value+'px');
+});
 
-function applyTemplate(){
-  const items = JSON.parse(localStorage.getItem(TEMPLATE_STORE_KEY) || '[]');
-  if (items.length) {
-    populateItems(items);
-  } else {
-    alert('尚未建立模板');
-  }
-}
+document.getElementById('taxRate').addEventListener('input', calculateTotal);
 
+/* ========= 初始化 ========= */
+document.addEventListener('DOMContentLoaded', ()=>{
+  // 設定初始欄寬 CSS 變數
+  document.documentElement.style.setProperty('--col-name-width','180px');
+  document.getElementById('generatedAt').textContent = new Date().toLocaleString();
+  calculateTotal();
+});
+
+/* ========= 將需供 HTML 直接呼叫的函式掛到全域 ========= */
+Object.assign(window, {
+  addRow,
+  duplicateRow,
+  deleteSelected,
+  toggleAll,
+  saveDraft,
+  loadDraft,
+  clearDraft,
+  importFile,
+  exportPDF,
+  applyTemplate,
+  adjustColWidth
+});

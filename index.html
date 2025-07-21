@@ -304,19 +304,9 @@
   </div>
 
   <!-- ===== Bootstrap JS & Icons ===== -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-// 自動千分位
-document.getElementById('itemTable').addEventListener('blur', e=>{
-  if(['item-qty','item-price','item-discount'].some(cls => e.target.classList.contains(cls))){
-    const val = (+e.target.value || 0);
-    e.target.value = val.toLocaleString();
-  }
-}, true);
-
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   
-  <script src="src/main.js"></script>
   <!-- jQuery, colResizable & html2pdf -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/colResizable/1.6/colResizable-1.6.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -327,5 +317,7 @@ document.getElementById('itemTable').addEventListener('blur', e=>{
     }
   });
   </script>
+  <!-- 自己的主程式，Vite 需 type="module" 才能正確 bundle -->
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>
