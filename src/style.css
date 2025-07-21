@@ -1,4 +1,5 @@
-:root{
+
+    :root{
       --primary:#0F4C81;        /* 深海軍藍 */
       --primary-light:#2BB3A3;  /* 藍綠漸層亮色 */
       --accent:#FF914D;         /* 橘色強調 */
@@ -87,6 +88,13 @@
     }
     /* 防止表格列分頁斷裂 */
     #itemTable tr { page-break-inside: avoid; break-inside: avoid; }
+    @media (max-width: 576px){
+      #itemTable th:nth-child(3),
+      #itemTable td:nth-child(3){
+        display:none;
+      }
+    }
+
     @media print{
       .no-print{display:none!important}
       body{background:#fff;padding:0}

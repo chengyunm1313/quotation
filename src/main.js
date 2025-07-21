@@ -1,17 +1,18 @@
+
     // ------- 初始化 -------
     document.getElementById('quoteDate').valueAsDate = new Date();
     document.getElementById('generatedAt').textContent = new Date().toLocaleString();
 
     // 事件委派：即時計算
     document.getElementById('itemTable').addEventListener('input', function (e) {
-      if (['item-qty','item-price'].some(cls => e.target.classList.contains(cls))) {
+      if (['item-qty','item-price','item-discount'].some(cls => e.target.classList.contains(cls))) {
         updateRowSubtotal(e.target.closest('tr'));
         calculateTotal();
       }
     });
 
     // -------- functions --------
-    window.addRow = function addRow(){
+    function addRow(){
       const tbody = document.querySelector('#itemTable tbody');
       const template = tbody.querySelector('tr').cloneNode(true);
       template.querySelectorAll('input, textarea').forEach(el=>{
@@ -24,7 +25,7 @@
       tbody.appendChild(template);
     }
 
-    window.deleteSelected = function deleteSelected(){
+    function deleteSelected(){
       const tbody = document.querySelector('#itemTable tbody');
       tbody.querySelectorAll('.row-chk:checked').forEach(chk=>{
         if(tbody.rows.length>1){ chk.closest('tr').remove(); }
@@ -32,22 +33,15 @@
       calculateTotal();
     }
 
-// 綁定按鈕事件
-document.getElementById('addBtn')?.addEventListener('click', () => window.addRow());
-document.getElementById('duplicateBtn')?.addEventListener('click', () => window.duplicateRow());
-document.getElementById('deleteBtn')?.addEventListener('click', () => window.deleteSelected());
-document.getElementById('colDecBtn')?.addEventListener('click', () => window.adjustColWidth(-20));
-document.getElementById('colIncBtn')?.addEventListener('click', () => window.adjustColWidth(20));
-document.getElementById('exportBtn')?.addEventListener('click', () => window.exportPDF());
-
-    window.toggleAll = function toggleAll(mainChk){
+    function toggleAll(mainChk){
       document.querySelectorAll('.row-chk').forEach(c=>c.checked=mainChk.checked);
     }
 
     function updateRowSubtotal(row){
-      const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
-      const price = parseFloat(row.querySelector('.item-price').value) || 0;
-      const subtotal = qty*price;
+      const qty      = parseFloat(row.querySelector('.item-qty').value.replace(/,/g,'')) || 0;
+      const price    = parseFloat(row.querySelector('.item-price').value.replace(/,/g,'')) || 0;
+      const discount = parseFloat(row.querySelector('.item-discount').value.replace(/,/g,'')) || 0;
+      const subtotal = qty * price - discount;
       row.querySelector('.item-subtotal').textContent = subtotal.toLocaleString();
     }
 
@@ -64,7 +58,7 @@ document.getElementById('exportBtn')?.addEventListener('click', () => window.exp
       document.getElementById('total').textContent   = `NT$ ${total.toLocaleString()}`;
     }
 
-    window.saveDraft = function saveDraft(){
+    function saveDraft(){
       const items = [];
       document.querySelectorAll('#itemTable tbody tr').forEach(tr=>{
         items.push({
@@ -83,13 +77,10 @@ document.getElementById('exportBtn')?.addEventListener('click', () => window.exp
     updateRowSubtotal(document.querySelector('#itemTable tbody tr'));
     calculateTotal();
 
-    // 啟用欄寬拖曳 (需要 jQuery + colResizable)
-    $(function(){
-      $('#itemTable').colResizable({liveDrag:true, minWidth:40});
-    });
+
 
     /* -------- 複製勾選列 -------- */
-    window.duplicateRow = function duplicateRow(){
+    function duplicateRow(){
       const tbody = document.querySelector('#itemTable tbody');
       const rows = [...tbody.querySelectorAll('.row-chk:checked')];
       if(!rows.length){ alert('請先勾選要複製的列'); return; }
@@ -103,7 +94,7 @@ document.getElementById('exportBtn')?.addEventListener('click', () => window.exp
     }
 
     /* -------- 讀取 / 清除 Draft -------- */
-    window.loadDraft = function loadDraft(){
+    function loadDraft(){
       const data = localStorage.getItem('quoteDraft');
       if(!data){ alert('沒有暫存資料'); return; }
       try{
@@ -112,7 +103,7 @@ document.getElementById('exportBtn')?.addEventListener('click', () => window.exp
         alert('暫存資料格式錯誤');
       }
     }
-    window.clearDraft = function clearDraft(){
+    function clearDraft(){
       localStorage.removeItem('quoteDraft');
       alert('已清除暫存');
     }
@@ -134,7 +125,7 @@ document.getElementById('exportBtn')?.addEventListener('click', () => window.exp
     applyColWidth(colSlider.value);
 
     /* -------- 快捷調整欄寬 -------- */
-    window.adjustColWidth = function adjustColWidth(delta){
+    function adjustColWidth(delta){
       const slider = document.getElementById('colWidthSlider');
       let newVal = Math.min(+slider.max, Math.max(+slider.min, (+slider.value + delta)));
       slider.value = newVal;
@@ -142,7 +133,7 @@ document.getElementById('exportBtn')?.addEventListener('click', () => window.exp
     }
 
     /* -------- 匯出 PDF -------- */
-    window.exportPDF = function exportPDF(){
+    function exportPDF(){
       const element = document.querySelector('.container-fluid');
       const clone = element.cloneNode(true);
 
@@ -168,7 +159,7 @@ document.getElementById('exportBtn')?.addEventListener('click', () => window.exp
     }
 
     /* -------- 匯入 JSON / CSV -------- */
-    window.importFile = function importFile(evt){
+    function importFile(evt){
       const file = evt.target.files[0];
       if(!file) return;
       const reader = new FileReader();
@@ -207,7 +198,8 @@ document.getElementById('exportBtn')?.addEventListener('click', () => window.exp
           <td><textarea class="form-control form-control-sm item-desc" rows="1">${it.desc||''}</textarea></td>
           <td><input type="text" class="form-control form-control-sm item-unit" value="${it.unit||'組'}"></td>
           <td><input type="number" class="form-control form-control-sm item-qty" value="${it.qty||1}" min="1"></td>
-          <td><input type="number" class="form-control form-control-sm item-price" value="${it.price||0}"></td>
+          <td><input type="text" class="form-control form-control-sm item-price" value="${it.price||0}" inputmode="decimal"></td>
+          <td><input type="text" class="form-control form-control-sm item-discount" value="${it.discount||0}" inputmode="decimal"></td>
           <td class="text-end fw-bold item-subtotal">0</td>
         `;
         tbody.appendChild(tr);
@@ -215,11 +207,30 @@ document.getElementById('exportBtn')?.addEventListener('click', () => window.exp
       });
       calculateTotal();
     }
+  
+// 自動千分位
+document.getElementById('itemTable').addEventListener('blur', e=>{
+  if(['item-qty','item-price','item-discount'].some(cls => e.target.classList.contains(cls))){
+    const val = (+e.target.value || 0);
+    e.target.value = val.toLocaleString();
+  }
+}, true);
 
-// 新增事件綁定，取代 HTML onclick 屬性
-document.getElementById("addBtn")?.addEventListener("click", addRow);
-document.getElementById("duplicateBtn")?.addEventListener("click", duplicateRow);
-document.getElementById("deleteBtn")?.addEventListener("click", deleteSelected);
-document.getElementById("colDecBtn")?.addEventListener("click", () => adjustColWidth(-20));
-document.getElementById("colIncBtn")?.addEventListener("click", () => adjustColWidth(20));
-document.getElementById("exportBtn")?.addEventListener("click", exportPDF);
+// --------- 套用模板功能 ---------
+const TEMPLATE_STORE_KEY = 'quoteTemplates';
+if (!localStorage.getItem(TEMPLATE_STORE_KEY)) {
+  localStorage.setItem(TEMPLATE_STORE_KEY, JSON.stringify([
+    {name:'網站建置',desc:'五頁靜態官網',unit:'案',qty:1,price:30000,discount:0},
+    {name:'維護費',desc:'一年',unit:'年',qty:1,price:12000,discount:0}
+  ]));
+}
+
+function applyTemplate(){
+  const items = JSON.parse(localStorage.getItem(TEMPLATE_STORE_KEY) || '[]');
+  if (items.length) {
+    populateItems(items);
+  } else {
+    alert('尚未建立模板');
+  }
+}
+

@@ -7,6 +7,9 @@
   <!-- Bootstrap 5 CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css">
+  
+  <!-- jQuery (for colResizable & any $ helpers) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
   <!-- ================= HEADER ================= -->
@@ -216,6 +219,13 @@
         </button>
       </div>
 
+      <!-- 套用模板 -->
+      <div class="btn-group me-2" role="group">
+        <button class="btn btn-outline-secondary btn-sm" title="套用範例項目" onclick="applyTemplate()">
+          <i class="bi bi-stars"></i> 套用模板
+        </button>
+      </div>
+
     </div>
 
     <!-- ===== 服務項目表格 ===== -->
@@ -229,6 +239,7 @@
             <th style="width:60px">單位</th>
             <th style="width:60px">數量</th>
             <th style="width:80px">單價</th>
+            <th style="width:70px">折扣</th>
             <th style="width:90px">小計</th>
           </tr>
         </thead>
@@ -238,8 +249,9 @@
             <td><input type="text" class="form-control form-control-sm item-name"></td>
             <td><textarea class="form-control form-control-sm item-desc" rows="1"></textarea></td>
             <td><input type="text" class="form-control form-control-sm item-unit" value="組"></td>
-            <td><input type="number" class="form-control form-control-sm item-qty" value="1" min="1"></td>
-            <td><input type="number" class="form-control form-control-sm item-price" value="0"></td>
+            <td><input type="number" class="form-control form-control-sm item-qty" value="1" min="1" pattern="\d*" inputmode="decimal"></td>
+            <td><input type="text" class="form-control form-control-sm item-price" value="0" inputmode="decimal"></td>
+            <td><input type="text" class="form-control form-control-sm item-discount" value="0" inputmode="decimal"></td>
             <td class="text-end fw-bold item-subtotal">0</td>
           </tr>
         </tbody>
@@ -292,12 +304,28 @@
   </div>
 
   <!-- ===== Bootstrap JS & Icons ===== -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+// 自動千分位
+document.getElementById('itemTable').addEventListener('blur', e=>{
+  if(['item-qty','item-price','item-discount'].some(cls => e.target.classList.contains(cls))){
+    const val = (+e.target.value || 0);
+    e.target.value = val.toLocaleString();
+  }
+}, true);
+
+</script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <script type="module" src="/src/main.js"></script>
+  
+  <script src="/src/main.js"></script>
   <!-- jQuery, colResizable & html2pdf -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/colResizable/1.6/colResizable-1.6.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+  $(function(){
+    if ($.fn.colResizable) {
+      $('#itemTable').colResizable({liveDrag:true, minWidth:40});
+    }
+  });
+  </script>
 </body>
 </html>
