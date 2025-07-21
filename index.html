@@ -564,11 +564,19 @@ function exportPDF(){
   document.getElementById('generatedAt').textContent = new Date().toLocaleString();
   const element = document.querySelector('.container-fluid');
   const opt = {
-    margin:       0.5,
+    // 設成 0 移除 html2pdf 預設 0.5‑inch 頁邊距
+    margin:       0,
     filename:     (document.getElementById('quoteNo').value || 'quotation') + '.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS:true },
-    jsPDF:        { unit:'in', format:'a4', orientation:'portrait' }
+    html2canvas:  {
+      scale: 2,
+      useCORS: true,
+      // 保證擷取完整寬度，避免 canvas 截圖時產生額外留白
+      scrollY: 0
+    },
+    jsPDF:        { unit:'in', format:'a4', orientation:'portrait' },
+    // 避免標題與表格被切到新頁
+    pagebreak:    { mode: ['avoid-all'] }
   };
   html2pdf().set(opt).from(element).save();
 }
