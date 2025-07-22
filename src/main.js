@@ -10,55 +10,88 @@ function fmt(n){
 }
 
 /* ========= 登入功能 ========= */
-const DEFAULT_USERNAME = 'admin';
 const DEFAULT_PASSWORD = 'chengyun2024';
 
 function checkLogin() {
   const loginInfo = JSON.parse(localStorage.getItem('quotationLoginInfo') || 'null');
   if (!loginInfo || !loginInfo.isLoggedIn) {
-    showLoginModal();
+    showLoginPage();
     return false;
   }
   return true;
 }
 
-function showLoginModal() {
-  const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-  loginModal.show();
+function showLoginPage() {
+  const loginPage = document.getElementById('loginPage');
+  loginPage.style.display = 'flex';
   
   // 清空之前的輸入和錯誤訊息
-  document.getElementById('username').value = '';
-  document.getElementById('password').value = '';
-  document.getElementById('loginError').classList.add('d-none');
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').classList.remove('show');
+  
+  // 聚焦到密碼輸入框
+  setTimeout(() => {
+    document.getElementById('loginPassword').focus();
+  }, 100);
+}
+
+function hideLoginPage() {
+  const loginPage = document.getElementById('loginPage');
+  loginPage.style.display = 'none';
 }
 
 function login() {
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
+  const password = document.getElementById('loginPassword').value;
+  const errorElement = document.getElementById('loginError');
   
-  if (username === DEFAULT_USERNAME && password === DEFAULT_PASSWORD) {
+  if (password === DEFAULT_PASSWORD) {
     localStorage.setItem('quotationLoginInfo', JSON.stringify({
       isLoggedIn: true,
-      username: username,
       loginTime: new Date().toISOString()
     }));
     
-    // 隱藏登入模態框
-    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-    loginModal.hide();
+    // 隱藏登入頁面
+    hideLoginPage();
     
     // 顯示登出按鈕
     document.getElementById('logoutBtn').classList.remove('d-none');
+    
+    // 清除錯誤訊息
+    errorElement.classList.remove('show');
   } else {
-    document.getElementById('loginError').classList.remove('d-none');
+    // 顯示錯誤訊息
+    errorElement.classList.add('show');
+    
+    // 清空密碼輸入框並聚焦
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginPassword').focus();
+    
+    // 3秒後自動隱藏錯誤訊息
+    setTimeout(() => {
+      errorElement.classList.remove('show');
+    }, 3000);
   }
 }
 
 function logout() {
   if (confirm('確定要登出系統嗎？')) {
     localStorage.removeItem('quotationLoginInfo');
-    showLoginModal();
+    showLoginPage();
     document.getElementById('logoutBtn').classList.add('d-none');
+  }
+}
+
+function togglePassword() {
+  const passwordInput = document.getElementById('loginPassword');
+  const toggleButton = document.getElementById('passwordToggle');
+  const icon = toggleButton.querySelector('i');
+  
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    icon.className = 'bi bi-eye-slash';
+  } else {
+    passwordInput.type = 'password';
+    icon.className = 'bi bi-eye';
   }
 }
 
@@ -451,9 +484,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const loginInfo = JSON.parse(localStorage.getItem('quotationLoginInfo') || 'null');
   if (loginInfo && loginInfo.isLoggedIn) {
     document.getElementById('logoutBtn').classList.remove('d-none');
+    hideLoginPage();
   } else {
     document.getElementById('logoutBtn').classList.add('d-none');
-    showLoginModal();
+    showLoginPage();
   }
   
   // 登入按鈕事件
@@ -462,8 +496,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // 登出按鈕事件
   document.getElementById('logoutBtn').addEventListener('click', logout);
   
+  // 密碼顯示/隱藏切換
+  document.getElementById('passwordToggle').addEventListener('click', togglePassword);
+  
   // 按Enter鍵登入
-  document.getElementById('password').addEventListener('keypress', (e) => {
+  document.getElementById('loginPassword').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       login();
     }
@@ -485,5 +522,7 @@ Object.assign(window, {
   adjustColWidth,
   login,
   logout,
-  showLoginModal
+  showLoginPage,
+  hideLoginPage,
+  togglePassword
 });

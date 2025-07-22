@@ -12,27 +12,70 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-  <!-- ================= 登入模態框 ================= -->
-  <div class="modal fade" id="loginModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">登入系統</h5>
+  <!-- ================= 登入頁面 ================= -->
+  <div id="loginPage" class="login-page">
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <h2 class="login-title">服務估價單</h2>
+          <p class="login-subtitle">程云行銷顧問有限公司</p>
         </div>
-        <div class="modal-body">
-          <div class="alert alert-danger d-none" id="loginError">帳號或密碼錯誤</div>
-          <div class="mb-3">
-            <label for="username" class="form-label">帳號</label>
-            <input type="text" class="form-control" id="username" placeholder="請輸入帳號">
+        
+        <div class="user-avatar">
+          <img src="https://blog.es2idea.com/images/hsu-hsiang02.webp" alt="用戶頭像" class="avatar-img">
+        </div>
+        
+        <div class="login-form">
+          <div class="lock-icon">
+            <i class="bi bi-lock"></i>
+            <span>請輸入密碼進入系統</span>
           </div>
-          <div class="mb-3">
-            <label for="password" class="form-label">密碼</label>
-            <input type="password" class="form-control" id="password" placeholder="請輸入密碼">
+          
+          <div class="password-input-group">
+            <input type="password" class="password-input" id="loginPassword" placeholder="請輸入密碼">
+            <button type="button" class="password-toggle" id="passwordToggle">
+              <i class="bi bi-eye"></i>
+            </button>
           </div>
+          
+          <div class="login-error" id="loginError">
+            <i class="bi bi-exclamation-triangle"></i>
+            密碼錯誤，請重新輸入
+          </div>
+          
+          <button type="button" class="login-btn" id="loginBtn">
+            <i class="bi bi-box-arrow-in-right"></i>
+            登錄
+          </button>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" id="loginBtn">登入</button>
-        </div>
+      </div>
+      
+      <div class="social-links">
+        <a href="https://www.facebook.com/HsiangPMKT?locale=zh_TW" class="social-link facebook">
+          <i class="bi bi-facebook"></i>
+          享哥玩行銷
+        </a>
+        <a href="https://www.youtube.com/channel/UC8f4hKwj7P4ca_lcaDFoxiQ" class="social-link youtube">
+          <i class="bi bi-youtube"></i>
+          AI享哥哥
+        </a>
+        <a href="mailto:chengyunm1313@gmail.com" class="social-link email">
+          <i class="bi bi-envelope-fill"></i>
+          chengyunm1313@gmail.com
+        </a>
+        <a href="https://line.me/R/ti/p/@950jnqcu" class="social-link line">
+          <i class="bi bi-line"></i>
+          LINE 官方帳號 - 享哥 | AI應用規劃師
+        </a>
+      </div>
+
+      <a href="https://lin.ee/epeTR8o" target="_blank" rel="noopener">
+        <img decoding="async" class="aligncenter" src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png" alt="加入好友" width="116" height="36" border="0">
+      </a>
+      
+      <div class="footer">
+        <p>© 2025 生成式 AI 應用教學. All rights reserved.</p>
+        <p>Made with ❤️ by 享哥 | AI應用規劃師</p>
       </div>
     </div>
   </div>

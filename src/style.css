@@ -100,26 +100,259 @@
       body{background:#fff;padding:0}
     }
 
-    /* 在文件末尾添加 */
-
-    /* 登入相關樣式 */
-    #loginModal .modal-header {
-      background-color: var(--primary);
+    /* 登入頁面樣式 */
+    .login-page {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      font-family: "Microsoft JhengHei", sans-serif;
+    }
+    
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+    }
+    
+    .login-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 350px;
+    }
+    
+    .login-header {
+      margin-bottom: 2rem;
+    }
+    
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #4A90E2;
+      margin-bottom: 0.5rem;
+    }
+    
+    .login-subtitle {
+      font-size: 0.9rem;
+      color: #666;
+      margin: 0;
+    }
+    
+    .user-avatar {
+      margin-bottom: 2rem;
+    }
+    
+    .avatar-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid #4A90E2;
+      object-fit: cover;
+    }
+    
+    .lock-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .lock-icon i {
+      font-size: 1.2rem;
+      color: #4A90E2;
+    }
+    
+    .password-input-group {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    
+    .password-input {
+      width: 100%;
+      padding: 0.75rem 3rem 0.75rem 1rem;
+      border: 2px solid #e1e5e9;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    
+    .password-input:focus {
+      border-color: #4A90E2;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    
+    .password-toggle:hover {
+      color: #4A90E2;
+    }
+    
+    .login-error {
+      display: none;
+      color: #dc3545;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      background: #f8d7da;
+      border-radius: 5px;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .login-error.show {
+      display: block;
+    }
+    
+    .login-error i {
+      margin-right: 0.5rem;
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .login-btn:active {
+      transform: translateY(0);
+    }
+    
+    .social-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 350px;
+    }
+    
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: white;
+      color: #333;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: transform 0.2s ease;
+      font-size: 0.9rem;
+    }
+    
+    .social-link:hover {
+      transform: translateY(-2px);
+      text-decoration: none;
+      color: #333;
+    }
+    
+    .social-link.facebook i {
+      color: #1877f2;
+    }
+    
+    .social-link.youtube i {
+      color: #ff0000;
+    }
+    
+    .social-link.messenger i {
+      color: #0084ff;
+    }
+    
+    .social-link.line i {
+      color: #00c300;
+    }
+    
+    .qr-code {
+      text-align: center;
       color: white;
     }
     
-    #loginModal .modal-title {
-      font-weight: 600;
+    .qr-code img {
+      width: 120px;
+      height: 120px;
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
     }
     
-    #loginBtn {
-      background-color: var(--primary);
-      border-color: var(--primary);
+    .qr-code p {
+      font-size: 0.9rem;
+      margin: 0;
     }
     
-    #loginBtn:hover {
-      background-color: var(--primary-light);
-      border-color: var(--primary-light);
+    .footer {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.8rem;
+    }
+    
+    .footer p {
+      margin: 0.25rem 0;
+    }
+    
+    /* 隱藏主內容當登入頁面顯示時 */
+    .login-page.show ~ .container-fluid {
+      display: none;
+    }
+    
+    /* 響應式設計 */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 1rem;
+        gap: 1.5rem;
+      }
+      
+      .login-card {
+        padding: 2rem 1.5rem;
+      }
+      
+      .social-links {
+        gap: 0.5rem;
+      }
+      
+      .social-link {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+      }
     }
 
     /* 在PDF匯出相關樣式部分添加 */
