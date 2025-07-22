@@ -9,10 +9,35 @@
   
   <!-- jQuery (for colResizable & any $ helpers) -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script type="module" crossorigin src="/quotation/assets/index-Dyis5VPg.js"></script>
-  <link rel="stylesheet" crossorigin href="/quotation/assets/index-By_ZDuU6.css">
+  <script type="module" crossorigin src="/quotation/assets/index-CCg__TS-.js"></script>
+  <link rel="stylesheet" crossorigin href="/quotation/assets/index-CcIblHw0.css">
 </head>
 <body>
+  <!-- ================= 登入模態框 ================= -->
+  <div class="modal fade" id="loginModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">登入系統</h5>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger d-none" id="loginError">帳號或密碼錯誤</div>
+          <div class="mb-3">
+            <label for="username" class="form-label">帳號</label>
+            <input type="text" class="form-control" id="username" placeholder="請輸入帳號">
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">密碼</label>
+            <input type="password" class="form-control" id="password" placeholder="請輸入密碼">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="loginBtn">登入</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <!-- ================= HEADER ================= -->
   <div class="container-fluid bg-white p-4 shadow-sm rounded">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -20,11 +45,16 @@
         <h1 class="mb-0">服務估價單</h1>
         <small class="text-muted">程云行銷顧問有限公司</small>
       </div>
-      <button class="btn btn-primary btn-sm no-print" onclick="window.print()">
-        <i class="bi bi-printer"></i> 列印 / 下載 PDF
-      </button>
+      <div>
+        <button class="btn btn-outline-secondary btn-sm me-2 no-print" id="logoutBtn">
+          <i class="bi bi-box-arrow-right"></i> 登出
+        </button>
+        <button class="btn btn-primary btn-sm no-print" onclick="window.print()">
+          <i class="bi bi-printer"></i> 列印 / 下載 PDF
+        </button>
+      </div>
     </div>
-
+    
     <!-- ===== Meta Info ===== -->
     <div class="row g-2 small meta-info boxed">
       <div>
@@ -281,11 +311,12 @@
       </div>
       <div class="col-md-8">
         <h6>備註 / 條款</h6>
-        <textarea class="form-control notes-area terms-box" id="notes" rows="4">
-1. 客戶簽章後即視為訂單確認。
+        <div class="terms-container position-relative">
+          <textarea class="form-control notes-area terms-box" id="notes" rows="4">1. 客戶簽章後即視為訂單確認。
 2. 執行時間以貴公司交付款項後，為開始起算時間。
-3. 以上方案.採一次性。
-        </textarea>
+3. 以上方案.採一次性。</textarea>
+          <div id="notesDisplay" class="notes-display d-none"></div>
+        </div>
       </div>
     </div>
 
