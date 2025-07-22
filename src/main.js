@@ -10,7 +10,7 @@ function fmt(n){
 }
 
 /* ========= 登入功能 ========= */
-const DEFAULT_PASSWORD = 'chengyun2024';
+const DEFAULT_PASSWORD = 'chengyun2025';
 
 function checkLogin() {
   const loginInfo = JSON.parse(localStorage.getItem('quotationLoginInfo') || 'null');
