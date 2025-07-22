@@ -9,6 +9,59 @@ function fmt(n){
   return (+n || 0).toLocaleString();
 }
 
+/* ========= 登入功能 ========= */
+const DEFAULT_USERNAME = 'admin';
+const DEFAULT_PASSWORD = 'chengyun2024';
+
+function checkLogin() {
+  const loginInfo = JSON.parse(localStorage.getItem('quotationLoginInfo') || 'null');
+  if (!loginInfo || !loginInfo.isLoggedIn) {
+    showLoginModal();
+    return false;
+  }
+  return true;
+}
+
+function showLoginModal() {
+  const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+  loginModal.show();
+  
+  // 清空之前的輸入和錯誤訊息
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+  document.getElementById('loginError').classList.add('d-none');
+}
+
+function login() {
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  
+  if (username === DEFAULT_USERNAME && password === DEFAULT_PASSWORD) {
+    localStorage.setItem('quotationLoginInfo', JSON.stringify({
+      isLoggedIn: true,
+      username: username,
+      loginTime: new Date().toISOString()
+    }));
+    
+    // 隱藏登入模態框
+    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+    loginModal.hide();
+    
+    // 顯示登出按鈕
+    document.getElementById('logoutBtn').classList.remove('d-none');
+  } else {
+    document.getElementById('loginError').classList.remove('d-none');
+  }
+}
+
+function logout() {
+  if (confirm('確定要登出系統嗎？')) {
+    localStorage.removeItem('quotationLoginInfo');
+    showLoginModal();
+    document.getElementById('logoutBtn').classList.add('d-none');
+  }
+}
+
 /* ========= 動態列操作 ========= */
 function addRow(){
   const tbody = document.querySelector('#itemTable tbody');
@@ -200,7 +253,18 @@ function importFile(evt){
     if(file.name.endsWith('.json')){
       try{
         const data = JSON.parse(txt);
-        if (data && Array.isArray(data.items) && data.items.length) {
+        
+        // 處理兩種可能的 JSON 格式
+        if (Array.isArray(data)) {
+          // 直接是項目陣列的情況 (demo.json 的格式)
+          if (data.length) {
+            populateItems(data);
+            alert('已匯入 JSON');
+          } else {
+            alert('JSON 內容無有效項目');
+          }
+        } else if (data && Array.isArray(data.items) && data.items.length) {
+          // 包含 items 陣列的物件格式
           applyMeta(data.meta || {});
           populateItems(data.items);
           alert('已匯入 JSON');
@@ -250,23 +314,97 @@ function importCSV(csvText){
 function exportPDF(){
   // 更新產生時間
   document.getElementById('generatedAt').textContent = new Date().toLocaleString();
-  const element = document.querySelector('.container-fluid');
-  const opt = {
-    // 設成 0 移除 html2pdf 預設 0.5‑inch 頁邊距
-    margin:       0,
-    filename:     (document.getElementById('quoteNo').value || 'quotation') + '.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  {
-      scale: 2,
-      useCORS: true,
-      // 保證擷取完整寬度，避免 canvas 截圖時產生額外留白
-      scrollY: 0
-    },
-    jsPDF:        { unit:'in', format:'a4', orientation:'portrait' },
-    // 避免標題與表格被切到新頁
-    pagebreak:    { mode: ['avoid-all'] }
-  };
-  html2pdf().set(opt).from(element).save();
+  
+  // 處理備註/條款的顯示問題
+  const notesTextarea = document.getElementById('notes');
+  const notesDisplay = document.getElementById('notesDisplay');
+  
+  // 將textarea內容轉換為HTML格式（保留換行）
+  const notesContent = notesTextarea.value
+    .split('\n')
+    .filter(line => line.trim() !== '') // 過濾空行
+    .map(line => `<p style="margin-bottom:0.5rem;line-height:1.5;">${line}</p>`)
+    .join('');
+    
+  // 設置顯示內容 - 使用內聯樣式確保PDF渲染時樣式不丟失
+  notesDisplay.innerHTML = notesContent;
+  notesDisplay.style.position = 'static'; // 改為靜態定位，避免絕對定位造成的問題
+  notesDisplay.style.display = 'block';
+  notesDisplay.style.width = '100%';
+  notesDisplay.style.border = '1px solid #dee2e6';
+  notesDisplay.style.borderRadius = '0.375rem';
+  notesDisplay.style.padding = '0.5rem';
+  notesDisplay.style.fontSize = '0.875rem';
+  notesDisplay.style.backgroundColor = 'white';
+  
+  // 顯示格式化的div，隱藏textarea
+  notesDisplay.classList.remove('d-none');
+  notesTextarea.classList.add('d-none');
+  
+  // 給DOM一點時間更新
+  setTimeout(() => {
+    const element = document.querySelector('.container-fluid');
+    const opt = {
+      // 設成 0 移除 html2pdf 預設 0.5‑inch 頁邊距
+      margin: 0,
+      filename: (document.getElementById('quoteNo').value || 'quotation') + '.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        // 保證擷取完整寬度，避免 canvas 截圖時產生額外留白
+        scrollY: 0,
+        // 增加延遲，確保DOM更新完成
+        windowWidth: document.documentElement.offsetWidth,
+        windowHeight: document.documentElement.offsetHeight,
+        logging: false,
+        onclone: function(clonedDoc) {
+          // 在克隆的文檔中再次確保備註顯示正確
+          const clonedTextarea = clonedDoc.getElementById('notes');
+          const clonedDisplay = clonedDoc.getElementById('notesDisplay');
+          if(clonedTextarea && clonedDisplay) {
+            const content = clonedTextarea.value
+              .split('\n')
+              .filter(line => line.trim() !== '') // 過濾空行
+              .map(line => `<p style="margin-bottom:0.5rem;line-height:1.5;">${line}</p>`)
+              .join('');
+            clonedDisplay.innerHTML = content;
+            clonedDisplay.style.position = 'static'; // 改為靜態定位
+            clonedDisplay.style.display = 'block';
+            clonedDisplay.style.width = '100%';
+            clonedDisplay.style.border = '1px solid #dee2e6';
+            clonedDisplay.style.borderRadius = '0.375rem';
+            clonedDisplay.style.padding = '0.5rem';
+            clonedDisplay.style.fontSize = '0.875rem';
+            clonedDisplay.style.backgroundColor = 'white';
+            clonedDisplay.classList.remove('d-none');
+            clonedTextarea.classList.add('d-none');
+          }
+        }
+      },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+      // 避免標題與表格被切到新頁
+      pagebreak: { mode: ['avoid-all'] }
+    };
+    
+    // 使用Promise來確保PDF生成後恢復原始狀態
+    html2pdf().set(opt).from(element).save().then(() => {
+      // PDF生成後恢復原始狀態
+      setTimeout(() => {
+        notesDisplay.classList.add('d-none');
+        notesTextarea.classList.remove('d-none');
+        // 恢復原始樣式
+        notesDisplay.style.position = '';
+        notesDisplay.style.display = '';
+        notesDisplay.style.width = '';
+        notesDisplay.style.border = '';
+        notesDisplay.style.borderRadius = '';
+        notesDisplay.style.padding = '';
+        notesDisplay.style.fontSize = '';
+        notesDisplay.style.backgroundColor = '';
+      }, 1000); // 給予足夠時間完成PDF生成
+    });
+  }, 100); // 給DOM更新的時間
 }
 
 /* ========= 模板 ========= */
@@ -308,6 +446,28 @@ document.addEventListener('DOMContentLoaded', ()=>{
   document.documentElement.style.setProperty('--col-name-width','180px');
   document.getElementById('generatedAt').textContent = new Date().toLocaleString();
   calculateTotal();
+  
+  // 登入相關初始化
+  const loginInfo = JSON.parse(localStorage.getItem('quotationLoginInfo') || 'null');
+  if (loginInfo && loginInfo.isLoggedIn) {
+    document.getElementById('logoutBtn').classList.remove('d-none');
+  } else {
+    document.getElementById('logoutBtn').classList.add('d-none');
+    showLoginModal();
+  }
+  
+  // 登入按鈕事件
+  document.getElementById('loginBtn').addEventListener('click', login);
+  
+  // 登出按鈕事件
+  document.getElementById('logoutBtn').addEventListener('click', logout);
+  
+  // 按Enter鍵登入
+  document.getElementById('password').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      login();
+    }
+  });
 });
 
 /* ========= 將需供 HTML 直接呼叫的函式掛到全域 ========= */
@@ -322,5 +482,8 @@ Object.assign(window, {
   importFile,
   exportPDF,
   applyTemplate,
-  adjustColWidth
+  adjustColWidth,
+  login,
+  logout,
+  showLoginModal
 });
