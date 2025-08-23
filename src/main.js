@@ -491,15 +491,53 @@ function exportPDF(){
             area.style.overflow = 'hidden';
           });
           
+          // 處理整個表格的樣式
+          const itemTable = clonedDoc.querySelector('#itemTable');
+          if (itemTable) {
+            itemTable.style.tableLayout = 'fixed';
+            itemTable.style.width = '100%';
+          }
+          
+          // 處理內容說明欄位所在的表格單元格
+          const descCells = clonedDoc.querySelectorAll('#itemTable th:nth-child(3), #itemTable td:nth-child(3)');
+          descCells.forEach(cell => {
+            cell.style.wordWrap = 'break-word';
+            cell.style.overflowWrap = 'break-word';
+            cell.style.wordBreak = 'break-word';
+            cell.style.whiteSpace = 'normal';
+            cell.style.overflow = 'visible';
+            cell.style.width = '250px';
+            cell.style.minWidth = '200px';
+            cell.style.maxWidth = '300px';
+            cell.style.verticalAlign = 'top';
+          });
+          
           // 處理內容說明欄位的自動換行
           const itemDescs = clonedDoc.querySelectorAll('.item-desc');
           itemDescs.forEach(desc => {
-            desc.style.whiteSpace = 'pre-wrap';
-            desc.style.wordWrap = 'break-word';
-            desc.style.overflowWrap = 'break-word';
-            desc.style.height = 'auto';
-            desc.style.minHeight = 'auto';
-            desc.style.overflow = 'visible';
+            // 將textarea的內容轉換為div來確保正確渲染
+            const content = desc.value || '';
+            const div = clonedDoc.createElement('div');
+            div.textContent = content;
+            div.style.whiteSpace = 'pre-wrap';
+            div.style.wordWrap = 'break-word';
+            div.style.overflowWrap = 'break-word';
+            div.style.wordBreak = 'break-word';
+            div.style.height = 'auto';
+            div.style.minHeight = 'auto';
+            div.style.overflow = 'visible';
+            div.style.maxWidth = '100%';
+            div.style.width = '100%';
+            div.style.boxSizing = 'border-box';
+            div.style.border = '1px solid #dee2e6';
+            div.style.padding = '0.375rem 0.75rem';
+            div.style.fontSize = '0.875rem';
+            div.style.lineHeight = '1.4';
+            div.style.backgroundColor = 'white';
+            div.style.fontFamily = '"Microsoft JhengHei", sans-serif';
+            
+            // 替換textarea為div
+            desc.parentNode.replaceChild(div, desc);
           });
           
           // 確保備註顯示正確
