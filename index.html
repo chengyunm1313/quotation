@@ -9,7 +9,7 @@
   
   <!-- jQuery (for colResizable & any $ helpers) -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script type="module" crossorigin src="/quotation/assets/index-Bw36NVqu.js"></script>
+  <script type="module" crossorigin src="/quotation/assets/index-BXZyna8u.js"></script>
   <link rel="stylesheet" crossorigin href="/quotation/assets/index-D3WPhTJU.css">
 </head>
 <body>
@@ -125,7 +125,7 @@
         <input type="text" id="venue" class="form-control" placeholder="貴公司會議室">
       </div>
       <div>
-        <label class="form-label mb-1">帳別</label>
+        <label class="form-label mb-1">未稅金額</label>
         <input type="text" id="account" class="form-control" value="NT$">
       </div>
       <div>
@@ -150,10 +150,13 @@
           <div class="col-12">
             <input type="text" class="form-control" id="clientCompany" placeholder="客戶公司名稱">
           </div>
-          <div class="col-6">
+          <div class="col-4">
+            <input type="text" class="form-control" id="clientTax" placeholder="統一編號">
+          </div>
+          <div class="col-4">
             <input type="text" class="form-control" id="clientContact" placeholder="聯絡人">
           </div>
-          <div class="col-6">
+          <div class="col-4">
             <input type="text" class="form-control" id="clientPhone" placeholder="電話">
           </div>
           <div class="col-12">
@@ -281,6 +284,16 @@
         <a href="./demo.csv" download class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-file-earmark-spreadsheet"></i> 下載 CSV 範例
         </a>
+      </div>
+
+      <!-- 匯出功能 -->
+      <div class="btn-group me-2" role="group">
+        <button class="btn btn-success btn-sm" title="匯出完整資料為 JSON" onclick="exportJSON()">
+          <i class="bi bi-download"></i> 匯出 JSON
+        </button>
+        <button class="btn btn-success btn-sm" title="匯出項目清單為 CSV" onclick="exportCSV()">
+          <i class="bi bi-download"></i> 匯出 CSV
+        </button>
       </div>
 
       <!-- PDF / 清除 -->
