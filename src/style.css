@@ -1,394 +1,514 @@
+:root {
+  --primary: #0F4C81;
+  /* 深海軍藍 */
+  --primary-light: #2BB3A3;
+  /* 藍綠漸層亮色 */
+  --accent: #FF914D;
+  /* 橘色強調 */
+  --border: #ccd7e2;
+  /* 淡邊框 */
+  --bg-page: #f0f4f8;
+  /* Page 背景 */
+  --bg-card: #ffffff;
+  /* Card 背景 */
+}
 
-:root{
-      --primary:#0F4C81;        /* 深海軍藍 */
-      --primary-light:#2BB3A3;  /* 藍綠漸層亮色 */
-      --accent:#FF914D;         /* 橘色強調 */
-      --border:#ccd7e2;         /* 淡邊框 */
-      --bg-page:#f0f4f8;        /* Page 背景 */
-      --bg-card:#ffffff;        /* Card 背景 */
-    }
-    body{
-      font-family:"Microsoft JhengHei",sans-serif;
-      background:var(--bg-page);
-      padding:24px
-    }
-    h1{font-size:1.6rem;font-weight:700}
-    h1{color:var(--primary);}
-    .table th, .table td{vertical-align:middle}
-    .form-control, .form-select{font-size:.875rem;padding:.25rem .5rem}
-    .btn-icon{padding:.25rem .5rem;font-size:.825rem}
-    /* ==== 通用卡片區塊 ==== */
-    .boxed{
-      background:var(--bg-card);
-      border:1px solid var(--border);
-      border-radius:.5rem;
-      padding:1rem;
-      margin-bottom:1rem;
-      box-shadow:0 1px 3px rgba(0,0,0,.05);
-    }
-    .boxed h6{
-      font-weight:700;
-      font-size:.9rem;
-      margin-bottom:.5rem;
-      color:var(--primary);
-    }
-    .btn-primary{
-      background:var(--primary);
-      border-color:var(--primary);
-    }
-    .btn-primary:hover{
-      background:var(--primary-light);
-      border-color:var(--primary-light);
-    }
-    .btn-accent{
-      background:var(--accent);
-      border-color:var(--accent);
-      color:#fff;
-    }
-    .btn-accent:hover{
-      background:#ff7a26;
-      border-color:#ff7a26;
-    }
-    .table thead.table-light th{
-      background:var(--primary);
-      color:#fff;
-      border-color:var(--primary);
-    }
-    .notes-area{
-      font-size: .875rem;
-      height: auto;
-      resize: vertical;
-    }
-    .signature-box{height:120px;border:2px dashed var(--primary);border-radius:4px;padding:.5rem;font-size:.875rem}
-    .vendor-box{
-      border:1px dashed #c5c5c5;
-      border-radius:.5rem;
-    }
-    .vendor-box.collapsed .row:not(:first-of-type){
-      display:none;
-    }
-    /* PDF 匯出與列印相關樣式 */
-    .page-break {
-      page-break-before: always;
-      break-before: always;
-    }
-    .terms-box {
-      height: auto !important;
-      overflow: visible !important;
-    }
-    /* 動態控制「服務項目」欄寬 */
-    #itemTable th:nth-child(2),
-    #itemTable td:nth-child(2){
-      width: var(--col-name-width, 180px);
-    }
-    /* Meta Info 欄寬自適應 */
-    .meta-info > div{
-      flex: 1 1 160px;      /* 每格最小 160px，可隨容器伸縮 */
-      max-width: 100%;
-    }
-    /* 防止表格列分頁斷裂 */
-    #itemTable tr { page-break-inside: avoid; break-inside: avoid; }
-    @media (max-width: 576px){
-      #itemTable th:nth-child(3),
-      #itemTable td:nth-child(3){
-        display:none;
-      }
-    }
+body {
+  font-family: "Microsoft JhengHei", sans-serif;
+  background: var(--bg-page);
+  padding: 24px
+}
 
-    @media print{
-      .no-print{display:none!important}
-      body{background:#fff;padding:0}
-    }
+h1 {
+  font-size: 1.6rem;
+  font-weight: 700
+}
 
-    /* 登入頁面樣式 */
-    .login-page {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      font-family: "Microsoft JhengHei", sans-serif;
-    }
-    
-    .login-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-      padding: 2rem;
-      max-width: 400px;
-      width: 100%;
-    }
-    
-    .login-card {
-      background: white;
-      border-radius: 20px;
-      padding: 2.5rem 2rem;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      width: 100%;
-      max-width: 350px;
-    }
-    
-    .login-header {
-      margin-bottom: 2rem;
-    }
-    
-    .login-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #4A90E2;
-      margin-bottom: 0.5rem;
-    }
-    
-    .login-subtitle {
-      font-size: 0.9rem;
-      color: #666;
-      margin: 0;
-    }
-    
-    .user-avatar {
-      margin-bottom: 2rem;
-    }
-    
-    .avatar-img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid #4A90E2;
-      object-fit: cover;
-    }
-    
-    .lock-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      color: #666;
-      font-size: 0.9rem;
-    }
-    
-    .lock-icon i {
-      font-size: 1.2rem;
-      color: #4A90E2;
-    }
-    
-    .password-input-group {
-      position: relative;
-      margin-bottom: 1rem;
-    }
-    
-    .password-input {
-      width: 100%;
-      padding: 0.75rem 3rem 0.75rem 1rem;
-      border: 2px solid #e1e5e9;
-      border-radius: 10px;
-      font-size: 1rem;
-      outline: none;
-      transition: border-color 0.3s ease;
-    }
-    
-    .password-input:focus {
-      border-color: #4A90E2;
-    }
-    
-    .password-toggle {
-      position: absolute;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: #999;
-      cursor: pointer;
-      font-size: 1.1rem;
-    }
-    
-    .password-toggle:hover {
-      color: #4A90E2;
-    }
-    
-    .login-error {
-      display: none;
-      color: #dc3545;
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
-      padding: 0.5rem;
-      background: #f8d7da;
-      border-radius: 5px;
-      border: 1px solid #f5c6cb;
-    }
-    
-    .login-error.show {
-      display: block;
-    }
-    
-    .login-error i {
-      margin-right: 0.5rem;
-    }
-    
-    .login-btn {
-      width: 100%;
-      padding: 0.75rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-    
-    .login-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-    }
-    
-    .login-btn:active {
-      transform: translateY(0);
-    }
-    
-    .social-links {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      width: 100%;
-      max-width: 350px;
-    }
-    
-    .social-link {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.75rem 1rem;
-      background: white;
-      color: #333;
-      text-decoration: none;
-      border-radius: 10px;
-      transition: transform 0.2s ease;
-      font-size: 0.9rem;
-    }
-    
-    .social-link:hover {
-      transform: translateY(-2px);
-      text-decoration: none;
-      color: #333;
-    }
-    
-    .social-link.facebook i {
-      color: #1877f2;
-    }
-    
-    .social-link.youtube i {
-      color: #ff0000;
-    }
-    
-    .social-link.messenger i {
-      color: #0084ff;
-    }
-    
-    .social-link.line i {
-      color: #00c300;
-    }
-    
-    .qr-code {
-      text-align: center;
-      color: white;
-    }
-    
-    .qr-code img {
-      width: 120px;
-      height: 120px;
-      border-radius: 10px;
-      margin-bottom: 0.5rem;
-    }
-    
-    .qr-code p {
-      font-size: 0.9rem;
-      margin: 0;
-    }
-    
-    .footer {
-      text-align: center;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 0.8rem;
-    }
-    
-    .footer p {
-      margin: 0.25rem 0;
-    }
-    
-    /* 隱藏主內容當登入頁面顯示時 */
-    .login-page.show ~ .container-fluid {
-      display: none;
-    }
-    
-    /* 響應式設計 */
-    @media (max-width: 480px) {
-      .login-container {
-        padding: 1rem;
-        gap: 1.5rem;
-      }
-      
-      .login-card {
-        padding: 2rem 1.5rem;
-      }
-      
-      .social-links {
-        gap: 0.5rem;
-      }
-      
-      .social-link {
-        padding: 0.6rem 0.8rem;
-        font-size: 0.85rem;
-      }
-    }
+h1 {
+  color: var(--primary);
+}
 
-    /* 在PDF匯出相關樣式部分添加 */
-    .pdf-hide {
-      opacity: 0;
-      position: absolute;
-      pointer-events: none;
-    }
-    
-    #notesPdfView {
-      white-space: pre-wrap;
-      font-family: "Microsoft JhengHei", sans-serif;
-      font-size: .875rem;
-      background-color: white;
-      z-index: 10;
-    }
-    /* 備註/條款顯示樣式 */
-    .terms-container {
-      position: relative;
-    }
+.table th,
+.table td {
+  vertical-align: middle
+}
 
-    .notes-display {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 0.375rem;
-      padding: 0.5rem;
-      font-size: 0.875rem;
-      overflow-y: auto;
-    }
+.form-control,
+.form-select {
+  font-size: .875rem;
+  padding: .25rem .5rem
+}
 
-    .notes-display p {
-      margin-bottom: 0.25rem;
-      line-height: 1.5;
-    }
+.btn-icon {
+  padding: .25rem .5rem;
+  font-size: .825rem
+}
+
+/* ==== 通用卡片區塊 ==== */
+.boxed {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+}
+
+.boxed h6 {
+  font-weight: 700;
+  font-size: .9rem;
+  margin-bottom: .5rem;
+  color: var(--primary);
+}
+
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-light);
+}
+
+.btn-accent {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn-accent:hover {
+  background: #ff7a26;
+  border-color: #ff7a26;
+}
+
+.table thead.table-light th {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.notes-area {
+  font-size: .875rem;
+  height: auto;
+  resize: vertical;
+}
+
+.signature-box {
+  height: 120px;
+  border: 2px dashed var(--primary);
+  border-radius: 4px;
+  padding: .5rem;
+  font-size: .875rem
+}
+
+.vendor-box {
+  border: 1px dashed #c5c5c5;
+  border-radius: .5rem;
+}
+
+.vendor-box.collapsed .row:not(:first-of-type) {
+  display: none;
+}
+
+/* PDF 匯出與列印相關樣式 */
+.page-break {
+  page-break-before: always;
+  break-before: always;
+}
+
+.terms-box {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* 內容說明欄位樣式優化 */
+.item-desc {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  resize: vertical;
+  min-height: 2.5rem;
+  line-height: 1.4;
+}
+
+/* PDF匯出時的特殊處理 */
+.pdf-export .item-desc {
+  height: auto !important;
+  min-height: auto !important;
+  overflow: visible !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* 確保PDF匯出時操作按鈕完全隱藏 */
+.pdf-export .no-print {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+/* 動態控制「服務項目」欄寬 */
+#itemTable th:nth-child(2),
+#itemTable td:nth-child(2) {
+  width: var(--col-name-width, 180px);
+}
+
+/* Meta Info 欄寬自適應 */
+.meta-info>div {
+  flex: 1 1 160px;
+  /* 每格最小 160px，可隨容器伸縮 */
+  max-width: 100%;
+}
+
+/* 防止表格列分頁斷裂 */
+#itemTable tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+@media (max-width: 576px) {
+
+  #itemTable th:nth-child(3),
+  #itemTable td:nth-child(3) {
+    display: none;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body {
+    background: #fff;
+    padding: 0
+  }
+  
+  /* 確保內容說明欄位自動換行 */
+  .item-desc {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+  
+  /* 確保表格內容完整顯示 */
+  #itemTable td {
+    overflow: visible !important;
+  }
+  
+  /* 移除操作按鈕區域的所有空間 */
+  .d-flex.flex-wrap.align-items-center.gap-2.mt-4.mb-2 {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+}
+
+/* 登入頁面樣式 */
+.login-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-family: "Microsoft JhengHei", sans-serif;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+}
+
+.login-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 350px;
+}
+
+.login-header {
+  margin-bottom: 2rem;
+}
+
+.login-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4A90E2;
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.user-avatar {
+  margin-bottom: 2rem;
+}
+
+.avatar-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid #4A90E2;
+  object-fit: cover;
+}
+
+.lock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.lock-icon i {
+  font-size: 1.2rem;
+  color: #4A90E2;
+}
+
+.password-input-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.password-input {
+  width: 100%;
+  padding: 0.75rem 3rem 0.75rem 1rem;
+  border: 2px solid #e1e5e9;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.password-input:focus {
+  border-color: #4A90E2;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.password-toggle:hover {
+  color: #4A90E2;
+}
+
+.login-error {
+  display: none;
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #f8d7da;
+  border-radius: 5px;
+  border: 1px solid #f5c6cb;
+}
+
+.login-error.show {
+  display: block;
+}
+
+.login-error i {
+  margin-right: 0.5rem;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.login-btn:active {
+  transform: translateY(0);
+}
+
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 350px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: white;
+  color: #333;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.social-link:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+  color: #333;
+}
+
+.social-link.facebook i {
+  color: #1877f2;
+}
+
+.social-link.youtube i {
+  color: #ff0000;
+}
+
+.social-link.messenger i {
+  color: #0084ff;
+}
+
+.social-link.line i {
+  color: #00c300;
+}
+
+.qr-code {
+  text-align: center;
+  color: white;
+}
+
+.qr-code img {
+  width: 120px;
+  height: 120px;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.qr-code p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.footer {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8rem;
+}
+
+.footer p {
+  margin: 0.25rem 0;
+}
+
+/* 隱藏主內容當登入頁面顯示時 */
+.login-page.show~.container-fluid {
+  display: none;
+}
+
+/* 響應式設計 */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .login-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .social-links {
+    gap: 0.5rem;
+  }
+
+  .social-link {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* 在PDF匯出相關樣式部分添加 */
+.pdf-hide {
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+#notesPdfView {
+  white-space: pre-wrap;
+  font-family: "Microsoft JhengHei", sans-serif;
+  font-size: .875rem;
+  background-color: white;
+  z-index: 10;
+}
+
+/* 備註/條款顯示樣式 */
+.terms-container {
+  position: relative;
+}
+
+.notes-display {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  overflow-y: auto;
+}
+
+.notes-display p {
+  margin-bottom: 0.25rem;
+  line-height: 1.5;
+}

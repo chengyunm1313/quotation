@@ -445,7 +445,7 @@ function exportPDF(){
     
   // 設置顯示內容 - 使用內聯樣式確保PDF渲染時樣式不丟失
   notesDisplay.innerHTML = notesContent;
-  notesDisplay.style.position = 'static'; // 改為靜態定位，避免絕對定位造成的問題
+  notesDisplay.style.position = 'static';
   notesDisplay.style.display = 'block';
   notesDisplay.style.width = '100%';
   notesDisplay.style.border = '1px solid #dee2e6';
@@ -458,35 +458,61 @@ function exportPDF(){
   notesDisplay.classList.remove('d-none');
   notesTextarea.classList.add('d-none');
   
+  // 為容器添加PDF匯出類別，用於特殊樣式處理
+  const container = document.querySelector('.container-fluid');
+  container.classList.add('pdf-export');
+  
   // 給DOM一點時間更新
   setTimeout(() => {
     const element = document.querySelector('.container-fluid');
     const opt = {
-      // 設成 0 移除 html2pdf 預設 0.5‑inch 頁邊距
       margin: 0,
       filename: (document.getElementById('quoteNo').value || 'quotation') + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: {
         scale: 2,
         useCORS: true,
-        // 保證擷取完整寬度，避免 canvas 截圖時產生額外留白
         scrollY: 0,
-        // 增加延遲，確保DOM更新完成
         windowWidth: document.documentElement.offsetWidth,
         windowHeight: document.documentElement.offsetHeight,
         logging: false,
         onclone: function(clonedDoc) {
-          // 在克隆的文檔中再次確保備註顯示正確
+          // 在克隆的文檔中處理樣式
+          const clonedContainer = clonedDoc.querySelector('.container-fluid');
+          clonedContainer.classList.add('pdf-export');
+          
+          // 確保操作按鈕區域完全隱藏
+          const buttonAreas = clonedDoc.querySelectorAll('.no-print, .d-flex.flex-wrap.align-items-center.gap-2.mt-4.mb-2');
+          buttonAreas.forEach(area => {
+            area.style.display = 'none';
+            area.style.height = '0';
+            area.style.margin = '0';
+            area.style.padding = '0';
+            area.style.overflow = 'hidden';
+          });
+          
+          // 處理內容說明欄位的自動換行
+          const itemDescs = clonedDoc.querySelectorAll('.item-desc');
+          itemDescs.forEach(desc => {
+            desc.style.whiteSpace = 'pre-wrap';
+            desc.style.wordWrap = 'break-word';
+            desc.style.overflowWrap = 'break-word';
+            desc.style.height = 'auto';
+            desc.style.minHeight = 'auto';
+            desc.style.overflow = 'visible';
+          });
+          
+          // 確保備註顯示正確
           const clonedTextarea = clonedDoc.getElementById('notes');
           const clonedDisplay = clonedDoc.getElementById('notesDisplay');
           if(clonedTextarea && clonedDisplay) {
             const content = clonedTextarea.value
               .split('\n')
-              .filter(line => line.trim() !== '') // 過濾空行
+              .filter(line => line.trim() !== '')
               .map(line => `<p style="margin-bottom:0.5rem;line-height:1.5;">${line}</p>`)
               .join('');
             clonedDisplay.innerHTML = content;
-            clonedDisplay.style.position = 'static'; // 改為靜態定位
+            clonedDisplay.style.position = 'static';
             clonedDisplay.style.display = 'block';
             clonedDisplay.style.width = '100%';
             clonedDisplay.style.border = '1px solid #dee2e6';
@@ -500,7 +526,6 @@ function exportPDF(){
         }
       },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-      // 避免標題與表格被切到新頁
       pagebreak: { mode: ['avoid-all'] }
     };
     
@@ -508,6 +533,7 @@ function exportPDF(){
     html2pdf().set(opt).from(element).save().then(() => {
       // PDF生成後恢復原始狀態
       setTimeout(() => {
+        container.classList.remove('pdf-export');
         notesDisplay.classList.add('d-none');
         notesTextarea.classList.remove('d-none');
         // 恢復原始樣式
@@ -519,9 +545,9 @@ function exportPDF(){
         notesDisplay.style.padding = '';
         notesDisplay.style.fontSize = '';
         notesDisplay.style.backgroundColor = '';
-      }, 1000); // 給予足夠時間完成PDF生成
+      }, 1000);
     });
-  }, 100); // 給DOM更新的時間
+  }, 100);
 }
 
 /* ========= 模板 ========= */
