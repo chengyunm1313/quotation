@@ -191,6 +191,7 @@ function collectMeta(){
     paymentTerm: document.getElementById('paymentTerm').value,
     validDays: document.getElementById('validDays').value,
     clientCompany: document.getElementById('clientCompany').value,
+    clientTax: document.getElementById('clientTax').value,
     clientContact: document.getElementById('clientContact').value,
     clientPhone: document.getElementById('clientPhone').value,
     clientAddress: document.getElementById('clientAddress').value,
@@ -274,6 +275,42 @@ function clearDraft(){
     localStorage.removeItem('quotationDraft');
     alert('已清除暫存資料');
   }
+}
+
+/* ========= 匯出 ========= */
+function exportJSON(){
+  const data = {meta:collectMeta(),items:collectItems()};
+  const jsonStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonStr], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (document.getElementById('quoteNo').value || 'quotation') + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportCSV(){
+  const items = collectItems();
+  if(!items.length){ alert('無項目資料可匯出'); return; }
+  
+  const headers = ['name','desc','unit','qty','price','discount'];
+  const csvContent = [
+    headers.join(','),
+    ...items.map(item => headers.map(h => `"${(item[h] || '').toString().replace(/"/g, '""')}"`).join(','))
+  ].join('\n');
+  
+  const blob = new Blob(['\uFEFF' + csvContent], {type: 'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (document.getElementById('quoteNo').value || 'quotation') + '_items.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 /* ========= 匯入 ========= */
@@ -517,6 +554,8 @@ Object.assign(window, {
   loadDraft,
   clearDraft,
   importFile,
+  exportJSON,
+  exportCSV,
   exportPDF,
   applyTemplate,
   adjustColWidth,
