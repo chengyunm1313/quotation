@@ -357,21 +357,68 @@ function importFile(evt){
 function importCSV(csvText){
   const lines = csvText.trim().split(/\r?\n/);
   if(lines.length<2){ alert('CSV 無資料'); return; }
-  const header = lines[0].split(',');
-  const items=[];
-  for(let i=1;i<lines.length;i++){
-    const cols = lines[i].split(',');
-    const it={};
-    header.forEach((h,idx)=> it[h.trim()] = cols[idx] ? cols[idx].trim() : '');
+  
+  // 改進的CSV解析，支援引號包圍的欄位
+  function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      const nextChar = line[i + 1];
+      
+      if (char === '"') {
+        if (inQuotes && nextChar === '"') {
+          // 雙引號轉義
+          current += '"';
+          i++; // 跳過下一個引號
+        } else {
+          // 切換引號狀態
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        // 在引號外的逗號才是分隔符
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    
+    // 加入最後一個欄位
+    result.push(current.trim());
+    return result;
+  }
+  
+  const header = parseCSVLine(lines[0]).map(h => h.trim());
+  const items = [];
+  
+  for(let i = 1; i < lines.length; i++){
+    if (!lines[i].trim()) continue; // 跳過空行
+    
+    const cols = parseCSVLine(lines[i]);
+    const it = {};
+    
+    header.forEach((h, idx) => {
+      let value = cols[idx] ? cols[idx].trim() : '';
+      // 移除可能的引號
+      if (value.startsWith('"') && value.endsWith('"')) {
+        value = value.slice(1, -1);
+      }
+      it[h] = value;
+    });
+    
     items.push({
-      name:it.name||'',
-      desc:it.desc||'',
-      unit:it.unit||'',
-      qty:it.qty||1,
-      price:it.price||0,
-      discount:it.discount||0
+      name: it.name || '',
+      desc: it.desc || '',
+      unit: it.unit || '組',
+      qty: it.qty || 1,
+      price: it.price || 0,
+      discount: it.discount || 0
     });
   }
+  
   if (items.length) {
     populateItems(items);
     alert('已匯入 CSV');
